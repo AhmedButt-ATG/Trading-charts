@@ -1,0 +1,24 @@
+<section class="max-w-6xl mx-auto p-6">
+  <div class="flex items-center justify-between mb-4">
+    <div>
+      <h2 class="text-2xl font-bold text-gray-800">FTSE 100</h2>
+      <div class="text-sm text-gray-500">Hourly</div>
+    </div>
+    <div class="text-sm text-gray-600">7040.5</div>
+  </div>
+
+  <div class="bg-white rounded-lg shadow p-4">
+    <canvas #candle class="w-full h-80"></canvas>
+  </div>
+
+  <div class="grid grid-cols-2 gap-4 mt-6">
+    <div class="bg-white rounded-lg shadow p-4">
+      <h3 class="text-sm font-medium text-gray-700 mb-2">Price (7d)</h3>
+      <canvas #line class="w-full h-40"></canvas>
+    </div>
+    <div class="bg-white rounded-lg shadow p-4">
+      <h3 class="text-sm font-medium text-gray-700 mb-2">Sector volume</h3>
+      <canvas #bar class="w-full h-40"></canvas>
+    </div>
+  </div>
+</section>
