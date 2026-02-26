@@ -1,164 +1,46 @@
-<div class="min-h-screen bg-gray-100 font-sans">
-
-  <!-- Top nav bar -->
-  <div class="bg-white border-b border-gray-200 px-6 py-3 flex items-center gap-3">
-    <span class="text-xl font-bold text-gray-900">Trade</span>
-  </div>
-
-  <!-- Page body -->
-  <div class="p-4">
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-
-      <!-- ── Ticker header ── -->
-      <div class="flex flex-wrap items-center gap-x-8 gap-y-2 px-6 py-4 border-b border-gray-100">
-        <!-- Price + Pair -->
-        <div class="flex items-end gap-3">
-          <span class="text-2xl font-bold text-blue-500">{{ ticker.price }}</span>
-          <div class="leading-tight">
-            <div class="text-sm font-semibold text-gray-800">{{ ticker.pair }}</div>
-            <div class="text-xs text-gray-400">{{ ticker.type }}</div>
-          </div>
-        </div>
-
-        <!-- Stats row -->
-        <div class="flex flex-wrap gap-x-8 gap-y-1 text-xs">
-          <div>
-            <span class="text-gray-400 block">Mark</span>
-            <span class="text-gray-700 font-medium">{{ ticker.mark }}</span>
-          </div>
-          <div>
-            <span class="text-gray-400 block">Index</span>
-            <span class="text-gray-700 font-medium">{{ ticker.index }}</span>
-          </div>
-          <div>
-            <span class="text-gray-400 block">Funding / Countdown</span>
-            <span class="text-green-500 font-medium">{{ ticker.funding }}</span>
-          </div>
-          <div>
-            <span class="text-gray-400 block">24H Change</span>
-            <span [class]="ticker.changePositive ? 'text-green-500 font-medium' : 'text-red-500 font-medium'">
-              {{ ticker.change }}
+<div class="p-6 bg-slate-50 min-h-screen font-sans">
+  <div class="max-w-6xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+    
+    <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-xl">Ξ</div>
+        <div>
+          <h2 class="text-xl font-bold text-gray-800">ETH / USDT <span class="text-sm font-normal text-gray-400 ml-2">Perpetual</span></h2>
+          <div class="flex items-center gap-2">
+            <span class="text-2xl font-mono font-bold" [ngClass]="priceUp ? 'text-green-500' : 'text-red-500'">
+              {{ livePrice | number:'1.2-2' }}
             </span>
-          </div>
-          <div>
-            <span class="text-gray-400 block">24H High / Low</span>
-            <span class="text-gray-700 font-medium">{{ ticker.highLow }}</span>
-          </div>
-          <div>
-            <span class="text-gray-400 block">24H Volume</span>
-            <span class="text-gray-700 font-medium">{{ ticker.volume }}</span>
+            <span class="text-xs font-bold px-2 py-0.5 rounded bg-green-100 text-green-600">+2.45%</span>
           </div>
         </div>
-
-        <!-- Settings gear -->
-        <div class="ml-auto text-gray-400 hover:text-gray-600 cursor-pointer text-lg select-none">⚙</div>
       </div>
-
-      <!-- ── Chart tabs + timeframe ── -->
-      <div class="flex items-center justify-between px-6 py-3 border-b border-gray-100">
-        <!-- Left tabs -->
-        <div class="flex gap-1">
-          <button
-            *ngFor="let tab of tabs"
-            (click)="activeTab = tab"
-            [ngClass]="tab === activeTab
-              ? 'bg-blue-500 text-white px-4 py-1.5 rounded-lg text-sm font-medium'
-              : 'text-gray-500 px-4 py-1.5 rounded-lg text-sm hover:bg-gray-100'"
-          >{{ tab }}</button>
+      <div class="flex gap-10 text-right">
+        <div>
+          <p class="text-[10px] uppercase text-gray-400 font-bold">24h High</p>
+          <p class="font-mono font-semibold">1,877.00</p>
         </div>
-        <!-- Right timeframe -->
-        <div class="flex gap-1">
-          <button
-            *ngFor="let tf of timeframes"
-            (click)="setTimeframe(tf)"
-            [ngClass]="tf === activeTimeframe
-              ? 'bg-blue-500 text-white px-3 py-1 rounded text-xs font-medium'
-              : 'text-gray-500 px-3 py-1 rounded text-xs hover:bg-gray-100'"
-          >{{ tf }}</button>
+        <div>
+          <p class="text-[10px] uppercase text-gray-400 font-bold">24h Vol</p>
+          <p class="font-mono font-semibold">335.2K</p>
         </div>
       </div>
-
-      <!-- ── Chart view ── -->
-      <div class="px-4 pt-4 pb-2" *ngIf="activeTab === 'Chart'">
-        <!-- Candlestick canvas -->
-        <div class="relative" style="height:320px;">
-          <canvas #candle></canvas>
-        </div>
-        <!-- Volume canvas -->
-        <div class="relative mt-1" style="height:72px;">
-          <canvas #volume></canvas>
-        </div>
-      </div>
-
-      <!-- Depth placeholder -->
-      <div *ngIf="activeTab === 'Depth'" class="flex items-center justify-center h-48 text-gray-400 text-sm">
-        Depth chart coming soon
-      </div>
-
-      <!-- ── Orders section ── -->
-      <div class="border-t border-gray-100 px-6 pt-4 pb-6">
-        <!-- Order type tabs -->
-        <div class="flex gap-6 mb-4">
-          <button
-            *ngFor="let ot of orderTabs"
-            (click)="activeOrderTab = ot"
-            [ngClass]="ot === activeOrderTab
-              ? 'text-gray-800 font-semibold text-sm border-b-2 border-blue-500 pb-1'
-              : 'text-gray-400 text-sm pb-1 hover:text-gray-600'"
-          >{{ ot }}</button>
-        </div>
-
-        <!-- Orders table -->
-        <div class="overflow-x-auto">
-          <table class="w-full text-sm min-w-max">
-            <thead>
-              <tr class="text-left text-gray-400 border-b border-gray-100">
-                <th class="pb-2 pr-6 font-normal">Instrument</th>
-                <th class="pb-2 pr-6 font-normal">Type</th>
-                <th class="pb-2 pr-6 font-normal">Size (ETH)</th>
-                <th class="pb-2 pr-6 font-normal">Entry Price</th>
-                <th class="pb-2 pr-6 font-normal">Margin (Isolated)</th>
-                <th class="pb-2 pr-6 font-normal">Margin (Usage)</th>
-                <th class="pb-2 pr-6 font-normal">Liq. Price</th>
-                <th class="pb-2 font-normal text-right">P&amp;L</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let o of visibleOrders" class="border-b border-gray-50 hover:bg-gray-50 transition">
-                <td class="py-3 pr-6">
-                  <div class="flex items-center gap-2">
-                    <span class="font-medium text-gray-800">{{ o.pair }}</span>
-                    <span class="bg-green-100 text-green-600 px-2 py-0.5 rounded-full text-xs font-medium">
-                      {{ o.status }}
-                    </span>
-                  </div>
-                </td>
-                <td class="py-3 pr-6" [ngClass]="o.type === 'Short' ? 'text-red-500' : 'text-green-500'">{{ o.type }}</td>
-                <td class="py-3 pr-6 text-gray-700">{{ o.size }}</td>
-                <td class="py-3 pr-6 text-gray-700">{{ o.entry }}</td>
-                <td class="py-3 pr-6 text-gray-700">{{ o.margin }}</td>
-                <td class="py-3 pr-6">
-                  <div class="flex items-center gap-2">
-                    <div class="w-20 h-1.5 rounded-full bg-gray-200">
-                      <div class="h-1.5 rounded-full bg-blue-400" [style.width]="o.marginUsage"></div>
-                    </div>
-                    <span class="text-gray-700">{{ o.marginUsage }}</span>
-                  </div>
-                </td>
-                <td class="py-3 pr-6 text-gray-700">{{ o.liq }}</td>
-                <td class="py-3 text-right">
-                  <div [ngClass]="o.pnlPositive ? 'text-green-500 font-medium' : 'text-red-500 font-medium'">{{ o.pnl }}</div>
-                  <div class="text-xs text-gray-400">{{ o.pnlVal }}</div>
-                </td>
-              </tr>
-              <tr *ngIf="visibleOrders.length === 0">
-                <td colspan="8" class="py-8 text-center text-gray-400 text-sm">No orders found</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
     </div>
+
+    <div class="p-4 bg-white relative">
+      <div class="h-[350px] w-full">
+        <canvas #candle></canvas>
+      </div>
+      <div class="h-[70px] w-full mt-2">
+        <canvas #volumeCanvas></canvas>
+      </div>
+    </div>
+
+    <div class="px-6 py-4 bg-gray-50 flex gap-2">
+      <button class="px-4 py-1.5 text-xs font-bold rounded-lg bg-white border border-gray-200 text-gray-500 hover:bg-gray-100">1H</button>
+      <button class="px-4 py-1.5 text-xs font-bold rounded-lg bg-blue-600 text-white shadow-sm">4H</button>
+      <button class="px-4 py-1.5 text-xs font-bold rounded-lg bg-white border border-gray-200 text-gray-500 hover:bg-gray-100">1D</button>
+      <button class="px-4 py-1.5 text-xs font-bold rounded-lg bg-white border border-gray-200 text-gray-500 hover:bg-gray-100">1W</button>
+    </div>
+
   </div>
 </div>
